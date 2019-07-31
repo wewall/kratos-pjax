@@ -14,7 +14,6 @@
         },
     });
     tinymce.PluginManager.add('success', tinymce.plugins.success);
-
     tinymce.create('tinymce.plugins.info', {
         init : function(ed, url) {
             ed.addButton('info', {
@@ -30,7 +29,6 @@
         },
     });
     tinymce.PluginManager.add('info', tinymce.plugins.info);
-
     tinymce.create('tinymce.plugins.warning', {
         init : function(ed, url) {
             ed.addButton('warning', {
@@ -46,7 +44,6 @@
         },
     });
     tinymce.PluginManager.add('warning', tinymce.plugins.warning);
-
     tinymce.create('tinymce.plugins.danger', {
         init : function(ed, url) {
             ed.addButton('danger', {
@@ -62,7 +59,6 @@
         },
     });
     tinymce.PluginManager.add('danger', tinymce.plugins.danger);     
-
     tinymce.create('tinymce.plugins.successbox', {
         init : function(ed, url) {
             ed.addButton('successbox', {
@@ -78,7 +74,6 @@
         },
     });
     tinymce.PluginManager.add('successbox', tinymce.plugins.successbox);
-
     tinymce.create('tinymce.plugins.infoboxs', {
         init : function(ed, url) {
             ed.addButton('infoboxs', {
@@ -94,7 +89,6 @@
         },
     });
     tinymce.PluginManager.add('infoboxs', tinymce.plugins.infoboxs);
-
     tinymce.create('tinymce.plugins.warningbox', {
         init : function(ed, url) {
             ed.addButton('warningbox', {
@@ -110,7 +104,6 @@
         },
     });
     tinymce.PluginManager.add('warningbox', tinymce.plugins.warningbox);
-
     tinymce.create('tinymce.plugins.dangerbox', {
         init : function(ed, url) {
             ed.addButton('dangerbox', {
@@ -126,7 +119,6 @@
         },
     });
     tinymce.PluginManager.add('dangerbox', tinymce.plugins.dangerbox);        
-
     tinymce.create('tinymce.plugins.title', {
         init : function(ed, url) {
             ed.addButton('title', {
@@ -142,7 +134,21 @@
         },
     });
     tinymce.PluginManager.add('title', tinymce.plugins.title);
-
+    tinymce.create('tinymce.plugins.highlight', {
+        init : function(ed, url) {
+            ed.addButton('highlight', {
+                title : '代码高亮',
+                image : url+'/images/highlight.png',
+                onclick : function() {
+                     ed.selection.setContent('<pre class="hl"><code class="">' + ed.selection.getContent() + '</code></pre>');
+                }
+            });
+        },
+        createControl : function(n, cm) {
+            return null;
+        },
+    });
+    tinymce.PluginManager.add('highlight', tinymce.plugins.highlight);
     tinymce.create('tinymce.plugins.accordion', {
         init : function(ed, url) {
             ed.addButton('accordion', {
@@ -158,7 +164,6 @@
         },
     });
     tinymce.PluginManager.add('accordion', tinymce.plugins.accordion);
-
     tinymce.create('tinymce.plugins.hide', {
         init : function(ed, url) {
             ed.addButton('hide', {
@@ -174,7 +179,6 @@
         },
     });
     tinymce.PluginManager.add('hide', tinymce.plugins.hide);
-
     tinymce.create('tinymce.plugins.kbd', {
         init : function(ed, url) {
             ed.addButton('kbd', {
@@ -190,7 +194,6 @@
         },
     });
     tinymce.PluginManager.add('kbd', tinymce.plugins.kbd);
-
     tinymce.create('tinymce.plugins.mark', {
         init : function(ed, url) {
             ed.addButton('mark', {
@@ -206,7 +209,6 @@
         },
     });
     tinymce.PluginManager.add('mark', tinymce.plugins.mark);
-
     tinymce.create('tinymce.plugins.striped', {
         init : function(ed, url) {
             ed.addButton('striped', {
@@ -222,7 +224,6 @@
         },
     });
     tinymce.PluginManager.add('striped', tinymce.plugins.striped);
-
     tinymce.create('tinymce.plugins.bdbtn', {
         init : function(ed, url) {
             ed.addButton('bdbtn', {
@@ -238,7 +239,6 @@
         },
     });
     tinymce.PluginManager.add('bdbtn', tinymce.plugins.bdbtn);
-
     tinymce.create('tinymce.plugins.ypbtn', {
         init : function(ed, url) {
             ed.addButton('ypbtn', {
@@ -254,14 +254,13 @@
         },
     });
     tinymce.PluginManager.add('ypbtn', tinymce.plugins.ypbtn);
-
     tinymce.create('tinymce.plugins.music', {
         init : function(ed, url) {
             ed.addButton('music', {
                 title : '网易云音乐',
                 image : url+'/images/music.png',
                 onclick : function() {
-                     ed.selection.setContent('[music]' + ed.selection.getContent() + '[/music]');
+                     ed.selection.setContent('[music autoplay="0"]' + ed.selection.getContent() + '[/music]');
                 }
             });
         },
@@ -270,7 +269,6 @@
         },
     });
     tinymce.PluginManager.add('music', tinymce.plugins.music);
-
     tinymce.create('tinymce.plugins.youku', {
         init : function(ed, url) {
             ed.addButton('youku', {
@@ -286,7 +284,6 @@
         },
     });
     tinymce.PluginManager.add('youku', tinymce.plugins.youku);
-
     tinymce.create('tinymce.plugins.tudou', {
         init : function(ed, url) {
             ed.addButton('tudou', {
@@ -302,7 +299,6 @@
         },
     });
     tinymce.PluginManager.add('tudou', tinymce.plugins.tudou);
-
     tinymce.create('tinymce.plugins.vqq', {
         init : function(ed, url) {
             ed.addButton('vqq', {
@@ -318,30 +314,13 @@
         },
     });
     tinymce.PluginManager.add('vqq', tinymce.plugins.vqq);
-
-    tinymce.create('tinymce.plugins.pptv', {
-        init : function(ed, url) {
-            ed.addButton('pptv', {
-                title : 'PPTV',
-                image : url+'/images/pptv.png',
-                onclick : function() {
-                     ed.selection.setContent('[pptv]' + ed.selection.getContent() + '[/pptv]');
-                }
-            });
-        },
-        createControl : function(n, cm) {
-            return null;
-        },
-    });
-    tinymce.PluginManager.add('pptv', tinymce.plugins.pptv);
-
     tinymce.create('tinymce.plugins.bilibili', {
         init : function(ed, url) {
             ed.addButton('bilibili', {
                 title : '哔哩哔哩',
                 image : url+'/images/bilibili.png',
                 onclick : function() {
-                     ed.selection.setContent('[bilibili]' + ed.selection.getContent() + '[/bilibili]');
+                     ed.selection.setContent('[bilibili cid="" page="1"]' + ed.selection.getContent() + '[/bilibili]');
                 }
             });
         },
@@ -350,7 +329,6 @@
         },
     });
     tinymce.PluginManager.add('bilibili', tinymce.plugins.bilibili);
-
     tinymce.create('tinymce.plugins.youtube', {
         init : function(ed, url) {
             ed.addButton('youtube', {

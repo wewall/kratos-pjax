@@ -1,8 +1,8 @@
 <?php
 //Custom login
 function custom_login(){
+    echo '<link rel="stylesheet" id="wp-admin-css" href="'.get_bloginfo('template_directory').'/static/css/customlogin.min.css" type="text/css" />';
     echo '<style>body{background:#92C1D1 url('.kratos_option('login_bak').') fixed center top no-repeat!important;background-size:cover!important}.login h1 a{background-image:url('.kratos_option('login_logo').')!important}</style>';
-    echo '<link rel="stylesheet" id="wp-admin-css" href="'.get_bloginfo('template_directory').'/css/customlogin.min.css" type="text/css" />';
 }
 add_action('login_head','custom_login');
 //Register domain limit
@@ -35,7 +35,7 @@ function validdomain($login,$email,$errors){
           }
         }
     }
-    if($isValidEmailDomain===false) $errors->add('domain_error','<strong>错误</strong>：'.kratos_option('derror'));
+    if($isValidEmailDomain===false) $errors->add('domain_error','<strong>'.__('错误','moedog').'</strong>：'.kratos_option('derror'));
 }
 //Pwd register
 add_action('register_form','kratos_show_extra_register_fields');
@@ -43,37 +43,35 @@ add_action('register_post','kratos_check_extra_register_fields',10,3);
 add_action('user_register','kratos_register_extra_fields',100);
 function kratos_show_extra_register_fields(){ ?>
     <p>
-        <label for="nickname">昵称<br/>
+        <label for="nickname"><?php _e('昵称','moedog'); ?><br/>
             <input id="nickname" class="input" type="text" name="nickname" value="" size="20" />
         </label>
     </p>
     <?php if(kratos_option('mail_reg')){ ?>
     <p>
-        <label for="password">密码<br/>
+        <label for="password"><?php _e('密码','moedog'); ?><br/>
             <input id="password" class="input" type="password" name="password" value="" size="25" />
         </label>
     </p>
     <p>
-        <label for="repeat_password">重复密码<br/>
+        <label for="repeat_password"><?php _e('重复密码','moedog'); ?><br/>
             <input id="repeat_password" class="input" type="password" name="repeat_password" value="" size="25" />
         </label>
-    </p><?php
-    }
-    $num1=rand(10,89);
-    $num2=rand(0,9); ?>
+    </p><?php }
+    $num1=rand(10,89);$num2=rand(0,9); ?>
     <p>
-        <label for="are_you_human">人机验证：<?php echo $num1.' + '.$num2.' = ?'; ?><br/>
-            <input id="are_you_human" class="input" type="text" name="are_you_human" value="" size="25" />
+        <label for="are_you_human"><?php _e('人机验证：','moedog');echo $num1.' + '.$num2.' = ?'; ?><br/>
+            <input id="are_you_human" class="input" autocomplete="off" type="text" name="are_you_human" value="" size="25" />
             <input type="hidden" name="num1" value="<?php echo $num1; ?>">
             <input type="hidden" name="num2" value="<?php echo $num2; ?>">
         </label>
     </p><?php
 }
 function kratos_check_extra_register_fields($login,$email,$errors){
-    if($_POST['nickname']=='') $errors->add('no_nickname',"<strong>错误</strong>：昵称一栏不能为空。");
-    if($_POST['password']!==$_POST['repeat_password']&&kratos_option('mail_reg')) $errors->add('passwords_not_matched',"<strong>错误</strong>：两次输入的密码不一致。");
-    if(strlen($_POST['password'])<8&&kratos_option('mail_reg')) $errors->add('password_too_short',"<strong>错误</strong>：密码长度必须大于8位。");
-    if($_POST['are_you_human']!=$_POST['num1']+$_POST['num2']) $errors->add('not_human',"<strong>错误</strong>：验证码错误，请重试。");
+    if($_POST['nickname']=='') $errors->add('no_nickname',__("<strong>错误</strong>：昵称一栏不能为空。",'moedog'));
+    if($_POST['password']!==$_POST['repeat_password']&&kratos_option('mail_reg')) $errors->add('passwords_not_matched',__("<strong>错误</strong>：两次输入的密码不一致。",'moedog'));
+    if(strlen($_POST['password'])<8&&kratos_option('mail_reg')) $errors->add('password_too_short',__("<strong>错误</strong>：密码长度必须大于8位。",'moedog'));
+    if($_POST['are_you_human']!=$_POST['num1']+$_POST['num2']) $errors->add('not_human',__("<strong>错误</strong>：验证码错误，请重试。",'moedog'));
 }
 function kratos_register_extra_fields($user_id){
     $userdata = array();
@@ -101,18 +99,23 @@ if(kratos_option('login_limit')){
 $limit_login_my_error_shown = false;
 $limit_login_just_lockedout = false;
 $limit_login_nonempty_credentials = false;
-function limit_login_get_address($type_name = ''){
-    if(isset($_SERVER[REMOTE_ADDR])) return $_SERVER[REMOTE_ADDR];
-    return '';
-}
-function is_limit_login_ip_whitelisted($ip=null){
-    if(is_null($ip)) $ip = limit_login_get_address();
-    $whitelisted = apply_filters('limit_login_whitelist_ip',false,$ip);
-    return ($whitelisted===true);
+function limit_login_get_address(){
+    if(!empty($_SERVER["HTTP_CLIENT_IP"])){
+        $cip = $_SERVER["HTTP_CLIENT_IP"];
+    }elseif(!empty($_SERVER["HTTP_X_FORWARDED_FOR"])){
+        $cip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+    }elseif(!empty($_SERVER["REMOTE_ADDR"])){
+        $cip = $_SERVER["REMOTE_ADDR"];
+    }else{
+        $cip = '';
+    }
+    preg_match("/[\d\.]{7,15}/",$cip,$cips);
+    $cip = isset($cips[0])?$cips[0]:'unknown';
+    unset($cips);
+    return $cip;
 }
 function is_limit_login_ok(){
     $ip = limit_login_get_address();
-    if(is_limit_login_ip_whitelisted($ip)) return true;
     $lockouts = get_option('limit_login_lockouts');
     return (!is_array($lockouts)||!isset($lockouts[$ip])||time()>=$lockouts[$ip]);
 }
@@ -186,23 +189,15 @@ function limit_login_failed($username) {
         limit_login_cleanup($retries,null,$valid);
         return;
     }
-    $whitelisted = is_limit_login_ip_whitelisted($ip);
     $retries_long = kratos_option('allowed_retries')*kratos_option('allowed_lockouts');
-    if($whitelisted){
-        if($retries[$ip]>=$retries_long){
-            unset($retries[$ip]);
-            unset($valid[$ip]);
-        }
+    global $limit_login_just_lockedout;
+    $limit_login_just_lockedout = true;
+    if($retries[$ip]>=$retries_long){
+        $lockouts[$ip] = time()+kratos_option('long_duration');
+        unset($retries[$ip]);
+        unset($valid[$ip]);
     }else{
-        global $limit_login_just_lockedout;
-        $limit_login_just_lockedout = true;
-        if($retries[$ip]>=$retries_long){
-            $lockouts[$ip] = time()+kratos_option('long_duration');
-            unset($retries[$ip]);
-            unset($valid[$ip]);
-        }else{
-            $lockouts[$ip] = time()+kratos_option('lockout_duration');
-        }
+        $lockouts[$ip] = time()+kratos_option('lockout_duration');
     }
     limit_login_cleanup($retries,$lockouts,$valid);
     limit_login_notify_email($username);
@@ -243,7 +238,6 @@ function is_limit_login_multisite(){
 function limit_login_notify_email($user){
     if(!kratos_option('lockout_notify_m')) return;
     $ip = limit_login_get_address();
-    $whitelisted = is_limit_login_ip_whitelisted($ip);
     $retries = get_option('limit_login_retries');
     if(!is_array($retries)) $retries = array();
     if(isset($retries[$ip])&&(($retries[$ip]/kratos_option('allowed_retries'))%kratos_option('notify_email_after'))!=0) return;
@@ -251,47 +245,39 @@ function limit_login_notify_email($user){
         $count = kratos_option('allowed_retries')*kratos_option('allowed_lockouts');
         $lockouts = kratos_option('allowed_lockouts');
         $time = round(kratos_option('long_duration')/3600);
-        $when = sprintf('%d 小时',$time);
+        $when = sprintf(__('%d 小时','moedog'),$time);
     }else{
         $count = $retries[$ip];
         $lockouts = floor($count/kratos_option('allowed_retries'));
         $time = round(kratos_option('lockout_duration')/60);
-        $when = sprintf('%d 分钟',$time);
+        $when = sprintf(__('%d 分钟','moedog'),$time);
     }
-    $blogname = is_limit_login_multisite()?get_site_option('site_name'):get_option('blogname');
-    if($whitelisted){
-        $subject = sprintf('[%s] 失败登陆尝试，来自白名单 IP',$blogname);
-    } else {
-        $subject = sprintf('[%s] 登录失败次数过多',$blogname);
-    }
-    $message = sprintf(__("失败登录次数：%d ，IP：%s",'limit-login')
+    $blogname = htmlspecialchars_decode(get_option('blogname'),ENT_QUOTES);
+    $subject = '['.$blogname.'] '.__('登录失败次数过多','moedog');
+    $message = sprintf(__("失败登录次数：%d ，IP：%s",'moedog')
                   ."\r\n\r\n",$count,$ip);
     if ($user != '') {
-        $message .= sprintf(__("最后一次尝试登录的用户名：%s", 'limit-login')
+        $message .= sprintf(__("最后一次尝试登录的用户名：%s",'moedog')
                     ."\r\n\r\n",$user);
     }
-    if($whitelisted){
-        $message .= 'IP并没有被阻止，因为在白名单中';
-    } else {
-        $message .= sprintf('此 IP 已被封锁，封锁时长：%s',$when);
-    }
+    $message .= sprintf(__('此 IP 已被封锁，封锁时长：%s','moedog'),$when);
     $admin_email = is_limit_login_multisite()?get_site_option('admin_email'):get_option('admin_email');
     @wp_mail($admin_email,$subject,$message);
 }
 function limit_login_error_msg(){
     $ip = limit_login_get_address();
     $lockouts = get_option('limit_login_lockouts');
-    $msg = '<strong>错误</strong>：登录失败次数过多，';
+    $msg = __('<strong>错误</strong>：登录失败次数过多，','moedog');
     if(!is_array($lockouts)||!isset($lockouts[$ip])||time()>= $lockouts[$ip]){
-        $msg .= '请稍后再试。';
+        $msg .= __('请稍候再试。','moedog');
         return $msg;
     }
     $when = ceil(($lockouts[$ip]-time())/60);
     if($when>60){
         $when = ceil($when/60);
-        $msg .= sprintf('请在 %d 小时后重试。',$when);
+        $msg .= sprintf(__('请在 %d 小时后重试。','moedog'),$when);
     } else {
-        $msg .= sprintf('请在 %d 分钟后重试。',$when);
+        $msg .= sprintf(__('请在 %d 分钟后重试。','moedog'),$when);
     }
     return $msg;
 }
@@ -303,10 +289,9 @@ function limit_login_retries_remaining_msg(){
     if(!isset($retries[$ip])||!isset($valid[$ip])||time()>$valid[$ip]) return '';
     if(($retries[$ip]%kratos_option('allowed_retries'))==0) return '';
     $remaining = max((kratos_option('allowed_retries')-($retries[$ip]%kratos_option('allowed_retries'))),0);
-    return sprintf('<strong>错误</strong>：账号或密码有误，您还有<strong>%d</strong>次尝试机会。',$remaining);
+    return sprintf(__('<strong>错误</strong>：账号或密码有误，您还有<strong>%d</strong>次尝试机会。','moedog'),$remaining);
 }
 function limit_login_get_message(){
-    if(is_limit_login_ip_whitelisted()) return '';
     if(!is_limit_login_ok()) return limit_login_error_msg();
     return limit_login_retries_remaining_msg();
 }

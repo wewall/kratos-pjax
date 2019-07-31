@@ -25,18 +25,13 @@
                 <i class="fa fa-twitter"></i>
             </div>
         </a>
-        <a href="javascript:;" class="share-plain googleplus style-plain" onclick="share('googleplus');" rel="nofollow">
-            <div class="icon-wrap">
-                <i class="fa fa-google-plus"></i>
-            </div>
-        </a>
         <a href="javascript:;" class="share-plain weixin pop style-plain" rel="nofollow">
             <div class="icon-wrap">
                 <i class="fa fa-weixin"></i>
             </div>
             <div class="share-int">
-                <div class="qrcode"><img src="https://www.fczbl.vip/api/qr/?m=0&url=<?php the_permalink() ?>" width="150" height="150"></div>
-                <p>打开微信“扫一扫”，打开网页后点击屏幕右上角分享按钮</p>
+                <div class="qrcode"><img src="https://api.fczbl.vip/qr/?m=0&url=<?php the_permalink() ?>" width="150" height="150"></div>
+                <p><?php _e('打开微信“扫一扫”，打开网页后点击屏幕右上角分享按钮','moedog'); ?></p>
             </div>
         </a>
     </div>
@@ -47,25 +42,23 @@
         var qzoneShareURL="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?";
         var facebookShareURL="https://www.facebook.com/sharer/sharer.php?";
         var twitterShareURL="https://twitter.com/intent/tweet?";
-        var googleplusShareURL="https://plus.google.com/share?";
         var host_url="<?php the_permalink(); ?>";
-        var title="【<?php the_title(); ?>】";
-        var qqtitle="<?php the_title(); ?>";
-        var excerpt="<?php echo get_the_excerpt(); ?>";
+        var title='<?php  echo str_replace("%22","%2522",rawurlencode('【'.get_the_title().'】')); ?>';
+        var qqtitle='<?php echo rawurlencode('【'.get_the_title().'】'); ?>';
+        var excerpt='<?php echo rawurlencode(get_the_excerpt()); ?>';
+        var wbexcerpt='<?php echo str_replace("%22","%2522",rawurlencode(get_the_excerpt())); ?>';
         var pic="<?php echo share_post_image(); ?>";
         var _URL;
         if(obj=="qq"){
             _URL=qqShareURL+"url="+host_url+"&title="+qqtitle+"&pics="+pic+"&desc=&summary="+excerpt+"&site=vtrois";
         }else if(obj=="weibo"){
-            _URL=weiboShareURL+"url="+host_url+"&title="+title+excerpt+"&pic="+pic;
+            _URL=weiboShareURL+"url="+host_url+"&title="+title+wbexcerpt+"&pic="+pic;
         }else if(obj=="qzone"){
             _URL=qzoneShareURL+"url="+host_url+"&title="+qqtitle+"&pics="+pic+"&desc=&summary="+excerpt+"&site=vtrois";
         }else if(obj=="facebook"){
              _URL=facebookShareURL+"u="+host_url;
         }else if(obj=="twitter"){
              _URL=twitterShareURL+"text="+title+excerpt+"&url="+host_url;
-        }else if(obj=="googleplus"){
-             _URL=googleplusShareURL+"url="+host_url;
         }
         window.open(_URL);
     }
